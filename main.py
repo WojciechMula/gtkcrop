@@ -17,6 +17,12 @@ def main():
     
     pixmap    = gtk.gdk.pixbuf_new_from_file(path)
     selection = ImagePortion(pixmap.get_width(), pixmap.get_height())
+    if 1:
+        selection.x.set(100)
+        selection.y.set(200)
+        selection.w.set(640)
+        selection.h.set(480)
+
     app = MainWindow(path, pixmap, selection)
     app.run()
 

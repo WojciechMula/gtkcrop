@@ -8,18 +8,23 @@ class Struct:
 class Image(object):
     "Fits image in the component"
 
-    def __init__(self, pixbuf):
+    def __init__(self, pixbuf, on_resize = None):
         self.pixbuf     = pixbuf
         self.displayed  = None
         self.scale      = 1.0
         self.dx         = 0
         self.dy         = 0
+        self.on_resize  = on_resize
 
         self.__setup()
 
 
     def get_root(self):
         return self.gui.evb
+
+
+    def get_scale(self):
+        return self.scale
 
 
     def __setup(self):
@@ -46,7 +51,7 @@ class Image(object):
         try:
             fw = width/float(W)
             fh = height/float(H)
-            self.scale = min(fw, fh)
+            self.scale = min(fw, fh, 1.0)
         except ZeroDivisionError:
             self.current = None
             return
@@ -65,6 +70,9 @@ class Image(object):
             w, h = ret
             self.dx = (rect.width  - w)/2
             self.dy = (rect.height - h)/2
+
+            if self.on_resize:
+                self.on_resize()
 
 
     def __expose_event(self, widget, event):

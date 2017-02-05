@@ -9,7 +9,7 @@ class Number(Observer):
     def set(self, x):
         if x != self.__value:
             self.__value = x
-            notify()
+            self.notify()
 
     def get(self):
         return self.__value
@@ -24,4 +24,29 @@ class ImagePortion:
 
         self.maxwidth  = maxwidth
         self.maxheight = maxheight
+
+
+    def get_rectangle(self):
+        return (
+            self.x.get(),
+            self.y.get(),
+            self.w.get(),
+            self.h.get()
+        )
+
+
+    def get_dimensions(self):
+        return (
+            self.w.get(),
+            self.h.get()
+        )
+
+
+    def get_coords(self):
+        x, y, w, h = self.get_rectangle()
+
+        return (x, y, x + w, y + h)
+
+    def __str__(self):
+        return "(%d, %d) - (%d, %d)" % self.get_coords()
 
