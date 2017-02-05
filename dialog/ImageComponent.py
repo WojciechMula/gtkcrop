@@ -1,4 +1,3 @@
-import pygtk
 import gtk
 
 
@@ -6,12 +5,13 @@ class Struct:
     pass
 
 
-class Image():
-    "Fits image in thw component"
+class Image(object):
+    "Fits image in the component"
 
     def __init__(self, pixbuf):
         self.pixbuf     = pixbuf
         self.displayed  = None
+        self.scale      = 1.0
         self.dx         = 0
         self.dy         = 0
 
@@ -46,13 +46,13 @@ class Image():
         try:
             fw = width/float(W)
             fh = height/float(H)
-            factor = min(fw, fh)
+            self.scale = min(fw, fh)
         except ZeroDivisionError:
             self.current = None
             return
 
-        width  = int(factor * W)
-        height = int(factor * H)
+        width  = int(self.scale * W)
+        height = int(self.scale * H)
         self.displayed = self.pixbuf.scale_simple(width, height, gtk.gdk.INTERP_NEAREST)
 
         return (width, height)
@@ -68,10 +68,14 @@ class Image():
 
 
     def __expose_event(self, widget, event):
-        if self.displayed is None:
-            return
+        if self.displayed:
+            item  = self.gui.image
+            style = item.get_style()
+            gc    = style.fg_gc[gtk.STATE_NORMAL]
+            item.window.draw_pixbuf(gc, self.displayed, 0, 0, self.dx, self.dy, -1, -1)
 
-        item  = self.gui.image
-        style = item.get_style()
-        gc    = style.fg_gc[gtk.STATE_NORMAL]
-        item.window.draw_pixbuf(gc, self.displayed, 0, 0, self.dx, self.dy, -1, -1);
+        self.custom_draw(item.window, style, gc)
+
+
+    def custom_draw(self, window, style, gc):
+        pass

@@ -1,21 +1,22 @@
 import pygtk
 import gtk
 
-from ImageComponent import Image
+from ImageWithSelection import Image
 
 
 class Struct:
     pass
 
 class MainWindow:
-    def __init__(self, path, pixmap):
-        self.path   = path
-        self.pixmap = pixmap
-        self.gui = Struct()
+    def __init__(self, path, pixmap, selection):
+        self.path      = path
+        self.pixmap    = pixmap
+        self.selection = selection
         self.__setup()
 
 
     def __setup(self):
+        self.gui = Struct()
         self.__create_gui()
         self.__connect()
 
@@ -33,7 +34,7 @@ class MainWindow:
         menu.append(self.gui.menu_exit)
 
         # image view
-        self.image = Image(self.pixmap)
+        self.image = Image(self.pixmap, self.selection)
         
         # final setup
         main = gtk.VBox()
