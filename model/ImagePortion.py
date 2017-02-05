@@ -10,20 +10,29 @@ class Number(Observer):
         if x != self.__value:
             self.__value = x
             self.notify()
+            return True
+        else:
+            return False
 
     def get(self):
         return self.__value
 
 
 class ImagePortion:
-    def __init__(self, maxwidth, maxheight):
+    def __init__(self, maxwidth, maxheight, aspectratio = None):
         self.x = Number(0)
         self.y = Number(0)
         self.w = Number(maxwidth)
         self.h = Number(maxheight)
 
-        self.maxwidth  = maxwidth
-        self.maxheight = maxheight
+        self.maxwidth       = maxwidth
+        self.maxheight      = maxheight
+        self.aspectratio    = aspectratio
+
+
+    def listen(self, handler):
+        for component in (self.x, self.y, self.w, self.h):
+            component.listen(handler)
 
 
     def get_rectangle(self):

@@ -3,7 +3,7 @@ class Observer(object):
         self.listeners = set()
 
     
-    def register(self, func):
+    def listen(self, func):
         self.listeners.add(func)
 
 

@@ -43,9 +43,6 @@ class PreviewSelection(object):
         else:
             msg = "size %d x %d" % (w, h)
         
-        print msg
-
-
         self.gui.status.set_text(msg)
 
 

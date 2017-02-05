@@ -27,6 +27,10 @@ class Image(object):
         return self.scale
 
 
+    def get_image_size(self):
+        return (self.displayed.get_width(), self.displayed.get_height())
+
+
     def __setup(self):
         self.gui = Struct()
         self.__create_gui()
