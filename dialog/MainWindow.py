@@ -1,6 +1,8 @@
 import pygtk
 import gtk
 
+from ImageComponent import Image
+
 
 class Struct:
     pass
@@ -29,18 +31,22 @@ class MainWindow:
         self.gui.menu_exit = gtk.MenuItem("_Exit")
         menu = gtk.MenuBar()
         menu.append(self.gui.menu_exit)
+
+        # image view
+        self.image = Image(self.pixmap)
         
         # final setup
         main = gtk.VBox()
         main.pack_start(menu, expand=False, fill=False)
+        main.pack_end(self.image.get_root())
 
         self.gui.root.add(main)
         self.gui.root.show_all()
 
+
     def __connect(self):
         self.gui.root.connect("delete_event", self.__root_delete_event)
         self.gui.menu_exit.connect("activate", self.__root_delete_event)
-        pass
 
 
     def __root_delete_event(self, *args):
