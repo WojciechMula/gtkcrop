@@ -134,6 +134,20 @@ class ImagePortion:
             raise NotImplemented
 
 
+    def set_width(self, w):
+        if self.aspectratio is None:
+            self.set_x1(self.x0.get() + w)
+        else:
+            raise NotImplemented
+
+
+    def set_height(self, h):
+        if self.aspectratio is None:
+            self.set_y1(self.y0.get() + h)
+        else:
+            raise NotImplemented
+
+
     def listen(self, handler):
         for component in (self.x0, self.y0, self.x1, self.y1):
             component.listen(handler)

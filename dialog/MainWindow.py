@@ -3,6 +3,7 @@ import gtk
 
 from ImageWithSelection import Image
 from PreviewSelection import PreviewSelection
+from SelectionInputWidget import SelectionInputWidget
 
 
 class Struct:
@@ -38,11 +39,17 @@ class MainWindow:
 
         # image view
         self.image = Image(self.pixbuf, self.selection)
+
+        hbox = gtk.HBox()
+        self.view = SelectionInputWidget(self.selection)
+
+        hbox.pack_start(self.view.get_root(), expand=False, fill=False)
+        hbox.pack_end(self.image.get_root())
         
         # final setup
         main = gtk.VBox()
         main.pack_start(menu, expand=False, fill=False)
-        main.pack_end(self.image.get_root())
+        main.pack_end(hbox)
 
         self.gui.root.add(main)
         self.gui.root.show_all()
