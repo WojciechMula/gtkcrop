@@ -27,17 +27,17 @@ class Image(ImageComponent):
 
     def update_selection_view(self):
         x0, y0, x1, y1 = self.selection.get_coords()
-        x0, y0 = self.world_to_window(x0, y0)
-        x1, y1 = self.world_to_window(x1, y1)
+
+        def world_to_window(x, y):
+            return (
+                self.dx + int(self.scale * x),
+                self.dy + int(self.scale * y)
+            )
+
+        x0, y0 = world_to_window(x0, y0)
+        x1, y1 = world_to_window(x1, y1)
 
         self.selection_view.set(x0, y0, x1, y1)
-
-
-    def world_to_window(self, x, y):
-        return (
-            self.dx + int(self.scale * x),
-            self.dy + int(self.scale * y)
-        )
 
 
     def window_to_world(self, x, y):
@@ -60,6 +60,9 @@ class Image(ImageComponent):
 
         def vline(x, y0, y1):
             window.draw_line(gc, x, y0, x, y1)
+
+        window.draw_pixbuf(gc, self.img_darkened, 0,  0, self.dx, self.dy, -1, -1)
+        window.draw_pixbuf(gc, self.img_scaled,   x0 - self.dx, y0 - self.dy, x0, y0, x1 - x0, y1 - y0)
 
         if x1 - x0 > 2*margin and y1 - y0 > 2*margin:
             hline(x0, x1, y0 + margin)

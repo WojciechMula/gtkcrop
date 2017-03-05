@@ -10,10 +10,11 @@ class Image(object):
 
     def __init__(self, pixbuf, on_resize = None):
         self.pixbuf     = pixbuf
-        self.displayed  = None
         self.scale      = 1.0
         self.dx         = 0
         self.dy         = 0
+        self.img_scaled     = None
+        self.img_darkened   = None
         self.on_resize  = on_resize
 
         self.__setup()
@@ -28,7 +29,7 @@ class Image(object):
 
 
     def get_image_size(self):
-        return (self.displayed.get_width(), self.displayed.get_height())
+        return (self.img_scaled.get_width(), self.img_scaled.get_height())
 
 
     def __setup(self):
@@ -62,7 +63,14 @@ class Image(object):
 
         width  = int(self.scale * W)
         height = int(self.scale * H)
-        self.displayed = self.pixbuf.scale_simple(width, height, gtk.gdk.INTERP_NEAREST)
+        self.img_scaled   = self.pixbuf.scale_simple(width, height, gtk.gdk.INTERP_NEAREST)
+
+        colorspace      = self.img_scaled.get_colorspace()
+        has_alpha       = self.img_scaled.get_has_alpha()
+        bits_per_sample = self.img_scaled.get_bits_per_sample()
+        self.img_darkened = gtk.gdk.Pixbuf(colorspace, has_alpha, bits_per_sample, width, height)
+        self.img_darkened.fill(0x00000000);
+        self.img_scaled.composite(self.img_darkened, 0, 0, width, height, 0, 0, 1.0, 1.0, gtk.gdk.INTERP_HYPER, int(0.5*255));
 
         return (width, height)
 
@@ -79,15 +87,14 @@ class Image(object):
                 self.on_resize()
 
 
+
     def __expose_event(self, widget, event):
-        if self.displayed:
+        if self.img_scaled:
             item  = self.gui.image
             style = item.get_style()
             gc    = style.fg_gc[gtk.STATE_NORMAL]
-            item.window.draw_pixbuf(gc, self.displayed, 0, 0, self.dx, self.dy, -1, -1)
-
-        self.custom_draw(item.window, style, gc)
+            self.custom_draw(item.window, style, gc)
 
 
     def custom_draw(self, window, style, gc):
-        pass
+        window.draw_pixbuf(gc, self.img_scaled, 0, 0, self.dx, self.dy, -1, -1)

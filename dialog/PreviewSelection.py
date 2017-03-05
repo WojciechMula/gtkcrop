@@ -20,10 +20,10 @@ class PreviewSelection(object):
         finally:
             self.dialog.hide()
 
+
     def __setup(self):
 
         self.gui = GUI()
-
         self.gui.image   = Image(self.pixbuf, lambda: self.on_resize())
         self.gui.status  = gtk.Label()
         self.gui.status.set_alignment(0.0, 0.5)
