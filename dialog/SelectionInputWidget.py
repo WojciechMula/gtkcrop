@@ -9,6 +9,7 @@ class SelectionInputWidget:
 
     def __init__(self, selection):
         self.selection = selection
+        self.notify    = True
         self.__setup()
 
 
@@ -86,12 +87,16 @@ class SelectionInputWidget:
         x0, y0, w,  h  = self.selection.get_rectangle()
         x0, y0, x1, y1 = self.selection.get_coords()
 
-        self.gui.x0.set_value(x0)
-        self.gui.x1.set_value(x1)
-        self.gui.y0.set_value(y0)
-        self.gui.y1.set_value(y1)
-        self.gui.w.set_value(w)
-        self.gui.h.set_value(h)
+        try:
+            self.notify = False
+            self.gui.x0.set_value(x0)
+            self.gui.x1.set_value(x1)
+            self.gui.y0.set_value(y0)
+            self.gui.y1.set_value(y1)
+            self.gui.w.set_value(w)
+            self.gui.h.set_value(h)
+        finally:
+            self.notify = True
 
         if h != 0:
             aspect = "aspect = %0.2f" % (w / float(h))
@@ -102,16 +107,20 @@ class SelectionInputWidget:
 
 
     def on_x0_change(self, entry):
-        self.selection.set_pos_x0(entry.get_value())
+        if self.notify:
+            self.selection.set_pos_x0(entry.get_value())
 
 
     def on_y0_change(self, entry):
-        self.selection.set_pos_y0(entry.get_value())
+        if self.notify:
+            self.selection.set_pos_y0(entry.get_value())
 
 
     def on_width_change(self, entry):
-        self.selection.set_width(entry.get_value())
+        if self.notify:
+            self.selection.set_width(entry.get_value())
 
 
     def on_height_change(self, entry):
-        self.selection.set_height(entry.get_value())
+        if self.notify:
+            self.selection.set_height(entry.get_value())

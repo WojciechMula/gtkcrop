@@ -22,6 +22,7 @@ def main():
         selection.y0.set(200)
         selection.x1.set(100 + 640)
         selection.y1.set(200 + 480)
+        selection.aspectratio = 640/480.
 
     app = MainWindow(path, pixmap, selection)
     app.run()
