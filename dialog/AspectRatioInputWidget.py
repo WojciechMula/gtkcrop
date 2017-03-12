@@ -10,6 +10,7 @@ class AspectRatioInputWidget:
     def __init__(self, selection, width, height):
         self.width  = width
         self.height = height
+        self.notify = True
         self.selection = selection
         self.__setup()
 
@@ -66,8 +67,20 @@ class AspectRatioInputWidget:
         self.gui.den.connect("value-changed", self.on_change)
         self.on_change(None)
 
+
+    def reset(self):
+        try:
+            self.notify = False
+
+            self.gui.num.set_value(self.width)
+            self.gui.den.set_value(self.height)
+        finally:
+            self.notify = True
     
-    def on_change(self, item):
+        self.on_change(None)
+
+
+    def on_change(self, unused):
 
         num = self.gui.num.get_value()
         den = self.gui.den.get_value()
@@ -81,6 +94,6 @@ class AspectRatioInputWidget:
             text = "invalid input"
         
         self.gui.aspect_view.set_text(text)
-        if aspect is not None:
+        if aspect is not None and self.notify:
             self.selection.set_aspect(aspect)
 

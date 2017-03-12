@@ -34,9 +34,18 @@ class MainWindow:
         # menu
         self.gui.menu_exit = gtk.MenuItem("_Exit")
         self.gui.menu_preview = gtk.MenuItem("_Preview")
+        self.gui.menu_commands = gtk.MenuItem("_Commands")
         menu = gtk.MenuBar()
         menu.append(self.gui.menu_exit)
+        menu.append(self.gui.menu_commands)
         menu.append(self.gui.menu_preview)
+
+        commands = gtk.Menu()
+        self.gui.menu_commands.set_submenu(commands)
+        self.gui.menu_select_whole_image   = gtk.MenuItem("Select _whole image")
+        self.gui.menu_restore_aspect_ratio = gtk.MenuItem("Restore _aspect ratio")
+        commands.append(self.gui.menu_select_whole_image)
+        commands.append(self.gui.menu_restore_aspect_ratio)
 
         # main items
         self.image  = Image(self.pixbuf, self.selection)
@@ -67,6 +76,7 @@ class MainWindow:
         self.gui.menu_exit.connect("activate", self.__root_delete_event)
         self.gui.menu_preview.connect("activate", self.__preview_event)
         self.gui.fixed_aspectratio.connect("clicked", self.__use_fixed_aspectratio_event)
+        self.gui.menu_restore_aspect_ratio.connect("activate", lambda _: self.__restore_aspect_ratio())
 
 
     def __root_delete_event(self, *args):
@@ -79,6 +89,10 @@ class MainWindow:
 
     def __use_fixed_aspectratio_event(self, button):
         self.selection.use_fixed_aspectratio(button.get_active())
+
+    
+    def __restore_aspect_ratio(self):
+        self.aspect.reset()
 
 
     def run(self):
