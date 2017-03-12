@@ -4,6 +4,7 @@ import gtk
 from ImageWithSelection import Image
 from PreviewSelection import PreviewSelection
 from SelectionInputWidget import SelectionInputWidget
+from AspectRatioInputWidget import AspectRatioInputWidget
 
 
 class Struct:
@@ -37,13 +38,19 @@ class MainWindow:
         menu.append(self.gui.menu_exit)
         menu.append(self.gui.menu_preview)
 
-        # image view
-        self.image = Image(self.pixbuf, self.selection)
+        # main items
+        self.image  = Image(self.pixbuf, self.selection)
+        self.rect   = SelectionInputWidget(self.selection)
+        self.aspect = AspectRatioInputWidget(self.selection, self.pixbuf.get_width(), self.pixbuf.get_height())
+        self.gui.fixed_aspectratio = gtk.CheckButton("_Fixed aspect ratio")
+
+        vbox = gtk.VBox()
+        vbox.pack_start(self.rect.get_root(),       expand=False, fill=False)
+        vbox.pack_start(self.gui.fixed_aspectratio, expand=False, fill=False)
+        vbox.pack_start(self.aspect.get_root(),     expand=False, fill=False)
 
         hbox = gtk.HBox()
-        self.view = SelectionInputWidget(self.selection)
-
-        hbox.pack_start(self.view.get_root(), expand=False, fill=False)
+        hbox.pack_start(vbox, expand=False, fill=False)
         hbox.pack_end(self.image.get_root())
         
         # final setup
@@ -59,6 +66,7 @@ class MainWindow:
         self.gui.root.connect("delete_event", self.__root_delete_event)
         self.gui.menu_exit.connect("activate", self.__root_delete_event)
         self.gui.menu_preview.connect("activate", self.__preview_event)
+        self.gui.fixed_aspectratio.connect("clicked", self.__use_fixed_aspectratio_event)
 
 
     def __root_delete_event(self, *args):
@@ -68,6 +76,9 @@ class MainWindow:
     def __preview_event(self, *args):
         dialog = PreviewSelection(self.pixbuf, self.selection)
         dialog()
+
+    def __use_fixed_aspectratio_event(self, button):
+        self.selection.use_fixed_aspectratio(button.get_active())
 
 
     def run(self):

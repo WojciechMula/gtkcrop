@@ -25,9 +25,10 @@ class ImagePortion:
         self.x1 = Number(maxwidth)
         self.y1 = Number(maxheight)
 
-        self.maxwidth       = maxwidth
-        self.maxheight      = maxheight
-        self.aspectratio    = aspectratio
+        self.maxwidth           = maxwidth
+        self.maxheight          = maxheight
+        self.aspectratio        = aspectratio
+        self.use_aspectratio    = (aspectratio != None)
 
 
     def set_pos_x0(self, x):
@@ -61,7 +62,7 @@ class ImagePortion:
         y = max(y, 0)
         y = min(y, y1)
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.y0.set(y)
 
         else:
@@ -83,7 +84,7 @@ class ImagePortion:
         y = max(y, y0)
         y = min(y, self.maxheight)
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.y1.set(y)
 
         else:
@@ -105,7 +106,7 @@ class ImagePortion:
         x = max(x, 0)
         x = min(x, x1)
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.x0.set(x)
 
         else:
@@ -127,7 +128,7 @@ class ImagePortion:
         x = max(x, x0)
         x = min(x, self.maxwidth)
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.x1.set(x)
 
         else:
@@ -153,11 +154,12 @@ class ImagePortion:
         self.x1.set(x1)
         self.y0.set(y0)
         self.y1.set(y1)
+        return True
 
 
     def set_x0_y0(self, x, y):
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.set_x0(x)
             self.set_y0(y)
         else:
@@ -172,14 +174,15 @@ class ImagePortion:
                 h  = int(w / self.aspectratio)
                 y0 = y1 - h
             else:
-                raise NotImplemented
+                w  = int(h * self.aspectratio)
+                x0 = x1 - w
 
             self.__set_coords(x0, y0, x1, y1)
 
 
     def set_x0_y1(self, x, y):
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.set_x0(x)
             self.set_y1(y)
         else:
@@ -194,14 +197,15 @@ class ImagePortion:
                 h  = int(w / self.aspectratio)
                 y1 = y0 + h
             else:
-                raise NotImplemented
+                w  = int(h * self.aspectratio)
+                x0 = x1 - w
 
             self.__set_coords(x0, y0, x1, y1)
 
 
     def set_x1_y0(self, x, y):
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.set_x1(x)
             self.set_y0(y)
         else:
@@ -216,14 +220,15 @@ class ImagePortion:
                 h  = int(w / self.aspectratio)
                 y0 = y1 - h
             else:
-                raise NotImplemented
+                w  = int(h * self.aspectratio)
+                x1 = x0 + w
 
             self.__set_coords(x0, y0, x1, y1)
 
 
     def set_x1_y1(self, x, y):
 
-        if self.aspectratio is None:
+        if self.use_aspectratio == False:
             self.set_x1(x)
             self.set_y1(y)
         else:
@@ -238,7 +243,8 @@ class ImagePortion:
                 h  = int(w / self.aspectratio)
                 y1 = y0 + h
             else:
-                raise NotImplemented
+                w  = int(h * self.aspectratio)
+                x1 = x0 + w
 
             self.__set_coords(x0, y0, x1, y1)
 
@@ -249,6 +255,46 @@ class ImagePortion:
 
     def set_height(self, h):
         self.set_y1(self.y0.get() + h)
+
+
+    def use_fixed_aspectratio(self, flag):
+        self.use_aspectratio = flag
+        self.__force_aspect_ratio()
+
+    def set_aspect(self, aspectratio):
+        self.aspectratio = aspectratio
+        self.__force_aspect_ratio()
+
+
+    def __force_aspect_ratio(self):
+        if not self.use_aspectratio:
+            return
+        
+        x0, y0, x1, y1 = self.get_coords()
+
+        w = x1 - x0
+        h = y1 - y0
+
+        while True:
+
+            if self.aspectratio > 1.0:
+                h  = int(w / self.aspectratio)
+                y1 = y0 + h
+            else:
+                w  = int(h * self.aspectratio)
+                x1 = x0 + w
+            
+            if self.__set_coords(x0, y0, x1, y1):
+                break
+            else:
+                if self.aspectratio > 1.0:
+                    h /= 2
+                    if h == 0:
+                        break
+                else:
+                    w /= 2
+                    if w == 0:
+                        break
 
 
     def listen(self, handler):
