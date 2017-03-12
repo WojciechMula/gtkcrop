@@ -22,6 +22,7 @@ class MainWindow:
         self.gui = Struct()
         self.__create_gui()
         self.__connect()
+        self.selection.notify()
 
 
     def __create_gui(self):

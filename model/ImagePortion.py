@@ -35,6 +35,34 @@ class ImagePortion:
         self.__set_coords(0, 0, self.maxwidth, self.maxheight)
 
 
+    def set_rectangle_unsafe(self, x, y, width, height):
+        if x < 0:
+            raise ValueError("x must not be less than zero")
+
+        if x > self.maxwidth:
+            raise ValueError("x must not be greater than %d" % self.maxwidth)
+
+        if y < 0:
+            raise ValueError("y must not be less than zero")
+
+        if y > self.maxheight:
+            raise ValueError("y must not be greater than %d" % self.maxheight)
+
+        if width < 0:
+            raise ValueError("width must not be less than zero")
+
+        if x + width > self.maxwidth:
+            raise ValueError("width must not be greater than %d" % (self.maxwidth - x))
+
+        if height < 0:
+            raise ValueError("height must not be less than zero")
+
+        if x + height > self.maxheight:
+            raise ValueError("height must not be greater than %d" % (self.maxheight - x))
+
+        self.__set_coords(x, y, x+width, y+height)
+
+
     def set_pos_x0(self, x):
         x0 = self.x0.get()
         x1 = self.x1.get()
@@ -42,7 +70,7 @@ class ImagePortion:
 
         x  = max(x, 0)
         x  = min(x, self.maxwidth - w)
-            
+
         self.x0.set(x)
         self.x1.set(x + w)
 
@@ -54,7 +82,7 @@ class ImagePortion:
 
         y  = max(y, 0)
         y  = min(y, self.maxheight - h)
-            
+
         self.y0.set(y)
         self.y1.set(y + h)
 
@@ -273,7 +301,7 @@ class ImagePortion:
     def __force_aspect_ratio(self):
         if not self.use_aspectratio:
             return
-        
+
         x0, y0, x1, y1 = self.get_coords()
 
         w = x1 - x0
@@ -287,7 +315,7 @@ class ImagePortion:
             else:
                 w  = int(h * self.aspectratio)
                 x1 = x0 + w
-            
+
             if self.__set_coords(x0, y0, x1, y1):
                 break
             else:
@@ -304,6 +332,10 @@ class ImagePortion:
     def listen(self, handler):
         for component in (self.x0, self.y0, self.x1, self.y1):
             component.listen(handler)
+
+
+    def notify(self):
+        self.x0.notify()
 
 
     def get_rectangle(self):
