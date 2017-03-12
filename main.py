@@ -52,6 +52,11 @@ def get_options(argv):
         help='print rectangle parametes, i.e. four integer numbers: x y w h'
     )
 
+    parser.add_option(
+        '-o', '--output', dest='output', type='string',
+        help='where to print the rectangle data (by default on stdout)'
+    )
+
     options, args = parser.parse_args(argv)
 
     has_x = options.x is not None
@@ -77,6 +82,11 @@ def main():
     except ProgramError as err:
         print err
         return 1
+
+    if options.output is not None:
+        output = file(options.output, 'w')
+    else:
+        output = sys.stdout
     
     pixmap    = gtk.gdk.pixbuf_new_from_file(path)
     selection = ImagePortion(pixmap.get_width(), pixmap.get_height())
@@ -97,12 +107,14 @@ def main():
     ret = app.run()
 
     if ret:
+        pattern = "%d %d %d %d\n"
         if options.coords:
-            x0, y0, x1, y1 = selection.get_coords()
-            print x0, y0, x1, y1
+            msg = pattern % selection.get_coords()
         else:
-            x, y, w, h = selection.get_rectangle()
-            print x, y, w, h
+            msg = pattern % selection.get_rectangle()
+
+        output.write(msg)
+        output.close()
 
     return 0
 
