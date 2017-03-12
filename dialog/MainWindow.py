@@ -61,7 +61,7 @@ class MainWindow:
         hbox = gtk.HBox()
         hbox.pack_start(vbox, expand=False, fill=False)
         hbox.pack_end(self.image.get_root())
-        
+
         # final setup
         main = gtk.VBox()
         main.pack_start(menu, expand=False, fill=False)
@@ -77,11 +77,12 @@ class MainWindow:
         self.gui.menu_preview.connect("activate", self.__preview_event)
         self.gui.fixed_aspectratio.connect("clicked", self.__use_fixed_aspectratio_event)
         self.gui.menu_restore_aspect_ratio.connect("activate", lambda _: self.__restore_aspect_ratio())
+        self.gui.menu_select_whole_image.connect("activate", lambda _: self.__select_whole_image())
 
 
     def __root_delete_event(self, *args):
         gtk.main_quit()
- 
+
 
     def __preview_event(self, *args):
         dialog = PreviewSelection(self.pixbuf, self.selection)
@@ -90,9 +91,13 @@ class MainWindow:
     def __use_fixed_aspectratio_event(self, button):
         self.selection.use_fixed_aspectratio(button.get_active())
 
-    
+
     def __restore_aspect_ratio(self):
         self.aspect.reset()
+
+
+    def __select_whole_image(self):
+        self.selection.select_all()
 
 
     def run(self):

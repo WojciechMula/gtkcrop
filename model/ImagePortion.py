@@ -31,6 +31,10 @@ class ImagePortion:
         self.use_aspectratio    = (aspectratio != None)
 
 
+    def select_all(self):
+        self.__set_coords(0, 0, self.maxwidth, self.maxheight)
+
+
     def set_pos_x0(self, x):
         x0 = self.x0.get()
         x1 = self.x1.get()
