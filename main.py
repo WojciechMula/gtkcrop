@@ -83,15 +83,26 @@ def main():
     if options.x is not None:
         selection.set_rectangle_unsafe(options.x, options.y, options.w, options.h)
     else:
-        # temporarily
-        selection.x0.set(100)
-        selection.y0.set(200)
-        selection.x1.set(100 + 640)
-        selection.y1.set(200 + 480)
-        selection.aspectratio = 640/480.
+        if 1:
+            # temporarily
+            selection.x0.set(100)
+            selection.y0.set(200)
+            selection.x1.set(100 + 640)
+            selection.y1.set(200 + 480)
+            selection.aspectratio = 640/480.
+        else:
+            selection.select_all()
 
     app = MainWindow(path, pixmap, selection)
-    app.run()
+    ret = app.run()
+
+    if ret:
+        if options.coords:
+            x0, y0, x1, y1 = selection.get_coords()
+            print x0, y0, x1, y1
+        else:
+            x, y, w, h = selection.get_rectangle()
+            print x, y, w, h
 
     return 0
 

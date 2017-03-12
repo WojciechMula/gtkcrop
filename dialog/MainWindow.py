@@ -30,7 +30,8 @@ class MainWindow:
         self.gui.root = gtk.Window(gtk.WINDOW_TOPLEVEL)
         caption = "File %s (%d x %d)" % (self.path, self.pixbuf.get_width(), self.pixbuf.get_height())
         self.gui.root.set_title(caption)
-        self.gui.root.resize(640, 480)
+        self.gui.root.maximize()
+
 
         # menu
         self.gui.menu_exit = gtk.MenuItem("_Exit")
@@ -75,6 +76,7 @@ class MainWindow:
     def __connect(self):
         self.gui.root.connect("delete_event", self.__root_delete_event)
         self.gui.menu_exit.connect("activate", self.__root_delete_event)
+        self.gui.menu_preview.connect("button-press-event", self.__preview_event)
         self.gui.menu_preview.connect("activate", self.__preview_event)
         self.gui.fixed_aspectratio.connect("clicked", self.__use_fixed_aspectratio_event)
         self.gui.menu_restore_aspect_ratio.connect("activate", lambda _: self.__restore_aspect_ratio())
@@ -106,12 +108,12 @@ class MainWindow:
         while True:
             try:
                 gtk.main()
-                return
+                return True
             except KeyboardInterrupt:
                 print "Ctrl-C pressed"
-                return
+                return False
             except:
                 import traceback
                 traceback.print_exc()
-                return
+                return False
 
